@@ -26,8 +26,8 @@ const SaveComplete = ({ completedTask }) => {
   }, [completedTask]);
   return (
     <div>
-      <a ref={saveBtn} className="btn btn-primary">
-        完了タスクリスト保存
+      <a ref={saveBtn} className="btn btn-warning">
+        完了タスクを画像で保存
       </a>
       <canvas
         className="d-none"

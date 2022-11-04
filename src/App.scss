@@ -1,13 +1,22 @@
 .c-board {
   &__body {
-    height: 700px;
+    height: calc(100vh - 144px);
   }
 }
 
 .c-category {
-  min-width: 450px;
+  min-width: 33vw;
+  &__count {
+    position: absolute;
+    right: 14px;
+    top: 14px
+  }
 }
 
 button {
   min-width: 70px;
+}
+
+input:focus-visible {
+  outline: none
 }

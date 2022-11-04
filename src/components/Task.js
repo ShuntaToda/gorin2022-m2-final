@@ -69,14 +69,16 @@ const Task = ({
         checkActice() ? "border-primary" : ""
       }`}
     >
-      <h3 className="m-0">
+      <h4 className="m-0">
         <input
-          className={`border-0 bg-transparent taskinput-${categoryIndex}-${taskIndex}`}
+          className={`border-0 fs-5 bg-transparent taskinput-${categoryIndex}-${taskIndex}`}
           value={name}
           onChange={changeName}
+          placeholder="タスク名を入力"
+          title={name}
         ></input>
-      </h3>
-      <button className="btn btn-primary" onClick={completeTask}>
+      </h4>
+      <button className="btn btn-success btn-sm" onClick={completeTask}>
         完了
       </button>
     </div>

@@ -26,7 +26,7 @@ const Board = () => {
         ...prevBoard.categories,
         {
           id: uuid(),
-          name: "カテゴリー名",
+          name: "",
           tasks: [],
         },
       ];
@@ -43,7 +43,6 @@ const Board = () => {
 
   const handleDragEnd = (drag) => {
     const { destination, source } = drag;
-    console.log(drag);
 
     if (drag.type === "category") {
       setBoard((prevBoard) => {
@@ -52,6 +51,9 @@ const Board = () => {
         return { ...prevBoard };
       });
     } else if (drag.type === "task") {
+      if (destination === null || source === null) {
+        return "";
+      }
       const sourceCategoryIndex = board.categories.findIndex(
         (category) => category.id === source.droppableId
       );
@@ -220,7 +222,7 @@ const Board = () => {
     setIsLoading(true);
     fetch(
       "https://shuntem.net/gorin2022/gorin2022_m2_api/public/api/deleted_tasks/" +
-        id,
+      id,
       {
         method: "DELETE",
         headers: {
@@ -234,16 +236,35 @@ const Board = () => {
       .catch((err) => alert("通信に失敗しました"))
       .finally(() => setIsLoading(false));
   };
+
+  const parsedCompletedTasks =  () => {
+    let _completedTasks = [];
+    for(let i in completedTask){
+      if ( typeof _completedTasks[completedTask[i].category] === "undefined" ){
+        _completedTasks[completedTask[i].category] = {
+          category: completedTask[i].category,
+          tasks: []
+        } 
+      }
+      _completedTasks[completedTask[i].category].tasks.push(completedTask[i])
+    }
+    let _tasks = []
+    for (let m in _completedTasks) {
+      _tasks.push(_completedTasks[m])
+    }
+    return _tasks
+  }
   return (
-    <div className="container mt-5">
+    <div className="container-xxl mt-2">
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="card">
           <div className="card-header">
-            <h1 className="m-0">
+            <h1>
               <input
-                className="border-0 bg-transparent"
+                className="border-0 bg-transparent fw-bold fs-2"
                 value={name}
                 onChange={changeName}
+                placeholder="ボード名を入力"
               ></input>
             </h1>
           </div>
@@ -293,35 +314,33 @@ const Board = () => {
                   >
                     カテゴリー追加
                   </button>
-                  <div className="table mx-2 border c-category p-2">
-                    <h2 className="text-center">完了タスク一覧</h2>
-                    <table className="m-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">name</th>
-                          <th scope="col">category</th>
-                          <th scope="col">created_at</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {completedTask.map((item) => (
-                          <tr>
-                            <td>{item.name}</td>
-                            <td>{item.category}</td>
-                            <td className="d-flex justify-content-between">
-                              <span>{item.created_at}</span>
-                              <button
-                                className="btn btn-outline-danger"
-                                onClick={() => removeCompTask(item.id)}
-                              >
-                                削除
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="c-category card mx-2 h-100">
+                    <div className="card-header bg-success">
+                      <h2 className="m-0 fs-5 fw-bold pt-1 pb-1 text-white">
+                        完了タスク一覧
+                        <span className="badge bg-light text-success fs-8 c-category__count">{completedTask.length}</span>
+                      </h2>
+                    </div>
+                    <div className="c-card-body " style={{ maxHeight: "calc(100vh - 260px)", overflow: "auto" }}>
+                          {parsedCompletedTasks().map((item) => (
+                            <div className="pe-3 ps-3">
+                              <h5 className="fw-bold pt-3">{item.category}</h5>
+                              {item.tasks.map( (task) => (
+                                <div class="d-flex py-3 px-4 pt-1 pb-1 my-2 border justify-content-between align-items-center ">
+                                  <h4 class="m-0 fs-6">{task.name}</h4>
+                                  <button
+                                    className="btn btn-outline-danger btn-sm"
+                                    onClick={() => removeCompTask(task.id)}
+                                  >
+                                    削除
+                                </button>
+                                </div>                                  
+                              ))}
+                            </div>
+                          ))}
+                    </div>
                   </div>
+                  
                 </div>
               )}
             </Droppable>
